@@ -6,6 +6,10 @@ include /usr/share/openstack-pkg-tools/pkgos.make
 %:
 	dh $@ --buildsystem=python_distutils --with python2
 
+override_dh_clean:
+	rm -rf docs/_build/
+	dh_clean -O--buildsystem=python_distutils
+
 ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 override_dh_auto_test:
 	nosetests
