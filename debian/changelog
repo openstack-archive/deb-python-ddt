@@ -1,0 +1,5 @@
+python-ddt (0.4.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: #724904)
+
+ -- Thomas Goirand <zigo@debian.org>  Sun, 29 Sep 2013 22:52:44 +0800

@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+UPSTREAM_GIT = git://github.com/txels/ddt.git
+include /usr/share/openstack-pkg-tools/pkgos.make
+
+%:
+	dh $@ --buildsystem=python_distutils --with python2
+
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
+override_dh_auto_test:
+	nosetests
+endif
+
+override_dh_installdocs:
+ifeq (,$(findstring nodocs, $(DEB_BUILD_OPTIONS)))
+	make -C docs html
+	dh_installdocs
+endif
