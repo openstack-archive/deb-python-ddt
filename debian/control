@@ -8,8 +8,9 @@ Uploaders: Julien Danjou <acid@debian.org>,
 Build-Depends: debhelper (>= 9),
                openstack-pkg-tools,
                python-all (>= 2.6.6-3~),
-               python-setuptools
-Build-Depends-Indep: pep8, python-coverage, python-nose, python-sphinx
+               python-setuptools,
+               python-sphinx (>= 1.0.7+dfsg) | python3-sphinx
+Build-Depends-Indep: pep8, python-coverage, python-nose
 Standards-Version: 3.9.4
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=openstack/python-ddt.git
 Vcs-Git: git://anonscm.debian.org/openstack/python-ddt.git

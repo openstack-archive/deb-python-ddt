@@ -4,7 +4,7 @@ UPSTREAM_GIT = git://github.com/txels/ddt.git
 include /usr/share/openstack-pkg-tools/pkgos.make
 
 %:
-	dh $@ --buildsystem=python_distutils --with python2
+	dh $@ --buildsystem=python_distutils --with python2,sphinxdoc
 
 override_dh_clean:
 	rm -rf docs/_build/
