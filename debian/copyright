@@ -4,20 +4,19 @@ Source: git://github.com/txels/ddt.git
 
 Files: debian/*
 Copyright: (c) 2013, Thomas Goirand <zigo@debian.org>
-License: LGPL-2
+License: LGPL
 
 Files: *
 Copyright: (c) 2012-2013, Carles Barrobes <carles@barrobes.com>
            (c) 2012, Santeri Paavolainen <santeri.paavolainen@codento.com>
            (c) 2012-2013, Jacob Kaplan-Moss <jacob@jacobian.org>
            (c) 2013, George "elb0w"  Tsafas <george.tsafas@gmail.com>
-License: LGPL-2
+License: LGPL
 
-License: LGPL-2
+License: LGPL
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free  
- Software Foundation; either version 2 of the License, or (at your option) any
- later version.
+ Software Foundation.
  .
  This library is distributed in the hope that it will be useful, but WITHOUT  
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -29,4 +28,4 @@ License: LGPL-2
  Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  .
  On Debian systems, the complete text of the GNU Lesser General Public License
- (LGPL) may be found in /usr/share/common-licenses/LGPL-2.
+ (LGPL) may be found in /usr/share/common-licenses/LGPL.
