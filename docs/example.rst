@@ -7,6 +7,13 @@ and two method decorators (for your tests that want to be multiplied):
 * ``data``: contains as many arguments as values you want to feed to the test.
 * ``file_data``: will load test data from a JSON file.
 
+Normally each value within ``data`` will be passed as a single argument to
+your test method. If these values are e.g. tuples, you will have to unpack them
+inside your test. Alternatively, you can use an additional decorator,
+``unpack``, that will automatically unpack tuples and lists into multiple
+arguments, and dictionaries into multiple keyword arguments. See examples
+below.
+
 This allows you to write your tests as:
 
 .. literalinclude:: ../test/test_example.py
@@ -22,28 +29,29 @@ and ``test_data_list.json``:
 .. literalinclude:: ../test/test_data_list.json
    :language: javascript
 
-And then run them with::
+And then run them with your favourite test runner, e.g. if you use nose::
 
     $ nosetests -v test/test_example.py
-    test_10_greater_than_5 (test.test_example.FooTestCase) ... ok
-    test_2_greater_than_1 (test.test_example.FooTestCase) ... ok
-    test_file_data_dict_sorted_list (test.test_example.FooTestCase) ... ok
-    test_file_data_dict_unsorted_list (test.test_example.FooTestCase) ... ok
-    test_file_data_list_Goodbye (test.test_example.FooTestCase) ... ok
-    test_file_data_list_Hello (test.test_example.FooTestCase) ... ok
-    test_larger_than_two_12 (test.test_example.FooTestCase) ... ok
-    test_larger_than_two_23 (test.test_example.FooTestCase) ... ok
-    test_larger_than_two_3 (test.test_example.FooTestCase) ... ok
-    test_larger_than_two_4 (test.test_example.FooTestCase) ... ok
-    test_not_larger_than_two_-3 (test.test_example.FooTestCase) ... ok
-    test_not_larger_than_two_0 (test.test_example.FooTestCase) ... ok
-    test_not_larger_than_two_1 (test.test_example.FooTestCase) ... ok
-    test_not_larger_than_two_2 (test.test_example.FooTestCase) ... ok
-    test_undecorated (test.test_example.FooTestCase) ... ok
 
-    ----------------------------------------------------------------------
-    Ran 15 tests in 0.002s
+..
+   program-output:: nosetests -v ../test/test_example.py
 
-    OK
+The number of test cases actually run and reported separately has been
+multiplied.
 
-6 test methods + some *magic* decorators = 15 test cases.
+
+DDT will try to give the new test cases meaningful names by converting the
+data values to valid python identifiers.
+
+
+.. note::
+
+   Python 2.7.3 introduced *hash randomization* which is by default
+   enabled on Python 3.3 and later. DDT's default mechanism to
+   generate meaningful test names will **not** use the test data value
+   as part of the name for complex types if hash randomization is
+   enabled.
+
+   You can disable hash randomization by setting the
+   ``PYTHONHASHSEED`` environment variable to a fixed value before
+   running tests (``export PYTHONHASHSEED=1`` for example).

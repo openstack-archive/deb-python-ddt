@@ -1,0 +1,5 @@
+coverage
+flake8
+nose
+pep8
+six
