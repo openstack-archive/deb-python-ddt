@@ -1,0 +1,9 @@
+Document: python-ddt-doc
+Title: Doc for Python DDT
+Author: N/A
+Abstract: N/A
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/python-ddt-doc/html/index.html
+Files: /usr/share/doc/python-ddt-doc/html/*

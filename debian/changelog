@@ -1,3 +1,17 @@
+python-ddt (1.0.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Added python-six as build-depends-indep.
+  * Ran wrap-and-sort -t -a.
+  * Added dh-python as build-depends.
+  * Removed version in python-all build-depends.
+  * Added Python 3 support.
+  * Added debian/source/options to ignore the generated egg-info.
+  * Using a separate package for the -doc.
+  * Standards-Version: 3.9.6 (no change).
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 27 May 2015 10:27:39 +0200
+
 python-ddt (0.4.0-2) unstable; urgency=low
 
   * Not specifying the version of the LGPL in debian/copyright.

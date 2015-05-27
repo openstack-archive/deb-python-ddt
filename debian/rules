@@ -1,22 +1,37 @@
 #!/usr/bin/make -f
 
+PYTHONS:=$(shell pyversions -vr)
+PYTHON3S:=$(shell py3versions -vr)
+
 UPSTREAM_GIT = git://github.com/txels/ddt.git
 include /usr/share/openstack-pkg-tools/pkgos.make
 
 %:
-	dh $@ --buildsystem=python_distutils --with python2,sphinxdoc
+	dh $@ --buildsystem=python_distutils --with python2,python3,sphinxdoc
+
+override_dh_auto_install:
+	set -e && for pyvers in $(PYTHONS); do \
+		python$$pyvers setup.py install --install-layout=deb \
+			--root $(CURDIR)/debian/python-ddt; \
+	done
+	set -e && for pyvers in $(PYTHON3S); do \
+		python$$pyvers setup.py install --install-layout=deb \
+			--root $(CURDIR)/debian/python3-ddt; \
+	done
+	rm -f $(CURDIR)/debian/python*/usr/lib/python*/dist-packages/*.pth
 
 override_dh_clean:
 	rm -rf docs/_build/
 	dh_clean -O--buildsystem=python_distutils
 
-ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 override_dh_auto_test:
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 	nosetests
+	nosetests3
 endif
 
-override_dh_installdocs:
+override_dh_sphinxdoc:
 ifeq (,$(findstring nodocs, $(DEB_BUILD_OPTIONS)))
-	make -C docs html
-	dh_installdocs
+	sphinx-build -b html docs $(CURDIR)/debian/python-ddt-doc/usr/share/doc/python-ddt-doc/html
+	dh_sphinxdoc -O--buildsystem=python_distutils
 endif
