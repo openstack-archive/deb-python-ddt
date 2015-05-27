@@ -9,6 +9,7 @@ python-ddt (1.0.0-1) unstable; urgency=medium
   * Added debian/source/options to ignore the generated egg-info.
   * Using a separate package for the -doc.
   * Standards-Version: 3.9.6 (no change).
+  * Fixed debian/copyright to use MIT license, not LGPL.
 
  -- Thomas Goirand <zigo@debian.org>  Wed, 27 May 2015 10:27:39 +0200
 
