@@ -1,5 +1,5 @@
+codecov
 coverage
 flake8
 nose
-pep8
-six
+six>=1.4.0

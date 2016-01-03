@@ -9,10 +9,9 @@ import inspect
 import json
 import os
 import re
-import sys
 from functools import wraps
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -21,6 +20,20 @@ __version__ = '1.0.0'
 DATA_ATTR = '%values'      # store the data the test must run with
 FILE_ATTR = '%file_path'   # store the path to JSON file
 UNPACK_ATTR = '%unpack'    # remember that we have to unpack values
+
+
+try:
+    trivial_types = (type(None), bool, int, float, basestring)
+except NameError:
+    trivial_types = (type(None), bool, int, float, str)
+
+
+def is_trivial(value):
+    if isinstance(value, trivial_types):
+        return True
+    elif isinstance(value, (list, tuple)):
+        return all(map(is_trivial, value))
+    return False
 
 
 def unpack(func):
@@ -70,14 +83,6 @@ def file_data(value):
     return wrapper
 
 
-def is_hash_randomized():
-    return (((sys.hexversion >= 0x02070300 and
-              sys.hexversion < 0x03000000) or
-             (sys.hexversion >= 0x03020300)) and
-            sys.flags.hash_randomization and
-            'PYTHONHASHSEED' not in os.environ)
-
-
 def mk_test_name(name, value, index=0):
     """
     Generate a new name for a test case.
@@ -86,47 +91,18 @@ def mk_test_name(name, value, index=0):
     string representation of the value, and convert the result into a valid
     python identifier by replacing extraneous characters with ``_``.
 
-    If hash randomization is enabled (a feature available since 2.7.3/3.2.3
-    and enabled by default since 3.3) and a "non-trivial" value is passed
-    this will omit the name argument by default. Set `PYTHONHASHSEED`
-    to a fixed value before running tests in these cases to get the
-    names back consistently or use the `__name__` attribute on data values.
+    We avoid doing str(value) if dealing with non-trivial values.
+    The problem is possible different names with different runs, e.g.
+    different order of dictionary keys (see PYTHONHASHSEED) or dealing
+    with mock objects.
+    Trivial scalar values are passed as is.
 
     A "trivial" value is a plain scalar, or a tuple or list consisting
     only of trivial values.
-
     """
 
-    # We avoid doing str(value) if all of the following hold:
-    #
-    # * Python version is 2.7.3 or newer (for 2 series) or 3.2.3 or
-    #   newer (for 3 series). Also sys.flags.hash_randomization didn't
-    #   exist before these.
-    # * sys.flags.hash_randomization is set to True
-    # * PYTHONHASHSEED is **not** defined in the environment
-    # * Given `value` argument is not a trivial scalar (None, str,
-    #   int, float).
-    #
-    # Trivial scalar values are passed as is in all cases.
-
-    trivial_types = (type(None), bool, str, int, float)
-    try:
-        trivial_types += (unicode,)
-    except NameError:
-        pass
-
-    def is_trivial(value):
-        if isinstance(value, trivial_types):
-            return True
-
-        if isinstance(value, (list, tuple)):
-            return all(map(is_trivial, value))
-
-        return False
-
-    if is_hash_randomized() and not is_trivial(value):
+    if not is_trivial(value):
         return "{0}_{1}".format(name, index + 1)
-
     try:
         value = str(value)
     except UnicodeEncodeError:
@@ -145,6 +121,15 @@ def feed_data(func, new_name, *args, **kwargs):
     def wrapper(self):
         return func(self, *args, **kwargs)
     wrapper.__name__ = new_name
+    # Try to call format on the docstring
+    if func.__doc__:
+        try:
+            wrapper.__doc__ = func.__doc__.format(*args, **kwargs)
+        except (IndexError, KeyError):
+            # Maybe the user has added some of the formating strings
+            # unintentionally in the docstring. Do not raise an exception as it
+            # could be that he is not aware of the formating feature.
+            pass
     return wrapper
 
 
@@ -182,7 +167,10 @@ def process_file_data(cls, name, func, file_attr):
             elif isinstance(data, list):
                 value = elem
                 test_name = mk_test_name(name, value, i)
-            add_test(cls, test_name, func, value)
+            if isinstance(value, dict):
+                add_test(cls, test_name, func, **value)
+            else:
+                add_test(cls, test_name, func, value)
 
 
 def ddt(cls):
