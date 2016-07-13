@@ -2,9 +2,14 @@ import os
 import json
 
 import six
+import mock
 
 from ddt import ddt, data, file_data
-from nose.tools import assert_equal, assert_is_not_none, assert_raises
+from nose.tools import (
+    assert_true, assert_equal, assert_is_not_none, assert_raises
+)
+
+from test.mycode import has_three_elements
 
 
 @ddt
@@ -42,13 +47,25 @@ class FileDataDummy(object):
 
 
 @ddt
-class FileDataMissingDummy(object):
+class JSONFileDataMissingDummy(object):
     """
     Dummy class to test the file_data decorator on when
     JSON file is missing
     """
 
     @file_data("test_data_dict_missing.json")
+    def test_something_again(self, value):
+        return value
+
+
+@ddt
+class YAMLFileDataMissingDummy(object):
+    """
+    Dummy class to test the file_data decorator on when
+    YAML file is missing
+    """
+
+    @file_data("test_data_dict_missing.yaml")
     def test_something_again(self, value):
         return value
 
@@ -96,14 +113,15 @@ def test_file_data_decorator_with_dict():
     assert_equal(getattr(data_hello, extra_attr), ("test_data_dict.json",))
 
 
-is_test = lambda x: x.startswith('test_')
+def _is_test(x):
+    return x.startswith('test_')
 
 
 def test_ddt():
     """
     Test the ``ddt`` class decorator
     """
-    tests = len(list(filter(is_test, Dummy.__dict__)))
+    tests = len(list(filter(_is_test, Dummy.__dict__)))
     assert_equal(tests, 4)
 
 
@@ -112,7 +130,7 @@ def test_file_data_test_creation():
     Test that the ``file_data`` decorator creates two tests
     """
 
-    tests = len(list(filter(is_test, FileDataDummy.__dict__)))
+    tests = len(list(filter(_is_test, FileDataDummy.__dict__)))
     assert_equal(tests, 2)
 
 
@@ -124,7 +142,7 @@ def test_file_data_test_names_dict():
     when it is parsed as a dictionary.
     """
 
-    tests = set(filter(is_test, FileDataDummy.__dict__))
+    tests = set(filter(_is_test, FileDataDummy.__dict__))
 
     tests_dir = os.path.dirname(__file__)
     test_data_path = os.path.join(tests_dir, 'test_data_dict.json')
@@ -141,7 +159,7 @@ def test_feed_data_data():
     """
     Test that data is fed to the decorated tests
     """
-    tests = filter(is_test, Dummy.__dict__)
+    tests = filter(_is_test, Dummy.__dict__)
 
     values = []
     obj = Dummy()
@@ -156,7 +174,7 @@ def test_feed_data_file_data():
     """
     Test that data is fed to the decorated tests from a file
     """
-    tests = filter(is_test, FileDataDummy.__dict__)
+    tests = filter(_is_test, FileDataDummy.__dict__)
 
     values = []
     obj = FileDataDummy()
@@ -169,11 +187,23 @@ def test_feed_data_file_data():
 
 def test_feed_data_file_data_missing_json():
     """
-    Test that a ValueError is raised
+    Test that a ValueError is raised when JSON file is missing
     """
-    tests = filter(is_test, FileDataMissingDummy.__dict__)
+    tests = filter(_is_test, JSONFileDataMissingDummy.__dict__)
 
-    obj = FileDataMissingDummy()
+    obj = JSONFileDataMissingDummy()
+    for test in tests:
+        method = getattr(obj, test)
+        assert_raises(ValueError, method)
+
+
+def test_feed_data_file_data_missing_yaml():
+    """
+    Test that a ValueError is raised when YAML file is missing
+    """
+    tests = filter(_is_test, YAMLFileDataMissingDummy.__dict__)
+
+    obj = YAMLFileDataMissingDummy()
     for test in tests:
         method = getattr(obj, test)
         assert_raises(ValueError, method)
@@ -248,18 +278,18 @@ def test_ddt_data_object():
 
     @ddt
     class Mytest(object):
-        @data(object)
+        @data(object())
         def test_object(self, val):
             pass
 
-    assert_is_not_none(getattr(Mytest, 'test_object_1_object'))
+    assert_is_not_none(getattr(Mytest, 'test_object_1'))
 
 
 def test_feed_data_with_invalid_identifier():
     """
     Test that data is fed to the decorated tests
     """
-    tests = list(filter(is_test, DummyInvalidIdentifier.__dict__))
+    tests = list(filter(_is_test, DummyInvalidIdentifier.__dict__))
     assert_equal(len(tests), 1)
 
     obj = DummyInvalidIdentifier()
@@ -269,3 +299,24 @@ def test_feed_data_with_invalid_identifier():
         'test_data_with_invalid_identifier_1_32v2_g__Gmw845h_W_b53wi_'
     )
     assert_equal(method(), '32v2 g #Gmw845h$W b53wi.')
+
+
+@mock.patch('ddt._have_yaml', False)
+def test_load_yaml_without_yaml_support():
+    """
+    Test that YAML files are not loaded if YAML is not installed.
+    """
+
+    @ddt
+    class NoYAMLInstalledTest(object):
+
+        @file_data('test_data_dict.yaml')
+        def test_file_data_yaml_dict(self, value):
+            assert_true(has_three_elements(value))
+
+    tests = filter(_is_test, NoYAMLInstalledTest.__dict__)
+
+    obj = NoYAMLInstalledTest()
+    for test in tests:
+        method = getattr(obj, test)
+        assert_raises(ValueError, method)
