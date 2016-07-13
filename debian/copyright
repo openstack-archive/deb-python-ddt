@@ -2,15 +2,15 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ddt
 Source: https://github.com/txels/ddt
 
-Files: debian/*
-Copyright: (c) 2013, Thomas Goirand <zigo@debian.org>
-License: Expat
-
 Files: *
 Copyright: (c) 2012-2013, Carles Barrobes <carles@barrobes.com>
            (c) 2012, Santeri Paavolainen <santeri.paavolainen@codento.com>
            (c) 2012-2013, Jacob Kaplan-Moss <jacob@jacobian.org>
            (c) 2013, George "elb0w"  Tsafas <george.tsafas@gmail.com>
+License: Expat
+
+Files: debian/*
+Copyright: (c) 2013-2016, Thomas Goirand <zigo@debian.org>
 License: Expat
 
 License: Expat

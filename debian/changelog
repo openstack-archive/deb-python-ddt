@@ -10,6 +10,7 @@ python-ddt (1.1.0-1) experimental; urgency=medium
   * Added python{3,}-{yaml,mock} as build-depends-indep.
   * Using pkgos-dh_auto_install from openstack-pkg-tools >= 52~.
   * Standards-Version is now 3.9.8 (no change).
+  * Fixed debian/copyright ordering.
 
  -- Thomas Goirand <zigo@debian.org>  Wed, 13 Jul 2016 16:40:13 +0200
 
