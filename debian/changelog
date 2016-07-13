@@ -8,6 +8,7 @@ python-ddt (1.1.0-1) experimental; urgency=medium
   [ Thomas Goirand ]
   * New upstream release.
   * Added python{3,}-{yaml,mock} as build-depends-indep.
+  * Using pkgos-dh_auto_install from openstack-pkg-tools >= 52~.
 
  -- Thomas Goirand <zigo@debian.org>  Wed, 13 Jul 2016 16:40:13 +0200
 
