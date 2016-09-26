@@ -1,6 +1,11 @@
 python-ddt (1.1.0-2) UNRELEASED; urgency=medium
 
+  [ Thomas Goirand ]
   * Build-depends on python-pep8, and not pep8.
+
+  [ Ondřej Nový ]
+  * d/s/options: extend-diff-ignore of .gitreview
+  * d/control: Using OpenStack's Gerrit as VCS URLs.
 
  -- Thomas Goirand <zigo@debian.org>  Tue, 23 Aug 2016 16:03:45 +0200
 
