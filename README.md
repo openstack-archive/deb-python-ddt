@@ -1,3 +1,10 @@
+Team and repository tags
+========================
+
+[![Team and repository tags](http://governance.openstack.org/badges/deb-python-ddt.svg)](http://governance.openstack.org/reference/tags/index.html)
+
+<!-- Change things from this point on -->
+
 [![Build Status](https://travis-ci.org/txels/ddt.svg)](https://travis-ci.org/txels/ddt)
 [![Code Health](https://landscape.io/github/txels/ddt/master/landscape.svg)](https://landscape.io/github/txels/ddt/master)
 <!-- [![Can I Use Python 3?](https://caniusepython3.com/project/ddt.svg)](https://caniusepython3.com/project/ddt) -->
